@@ -30,6 +30,7 @@ class DicomProcessorGUI:
 
 def run_gui():
     root = Tk()
+    root.geometry("400x200")  # Set the initial window size here (width x height)
     gui = DicomProcessorGUI(root)
     root.mainloop()
 
