@@ -1,2 +1,15 @@
 
 *.pyc
+build/gui/Analysis-00.toc
+build/gui/base_library.zip
+build/gui/EXE-00.toc
+build/gui/gui.pkg
+build/gui/PKG-00.toc
+build/gui/PYZ-00.pyz
+build/gui/PYZ-00.toc
+build/gui/Tree-00.toc
+build/gui/Tree-01.toc
+build/gui/Tree-02.toc
+build/gui/warn-gui.txt
+build/gui/xref-gui.html
+dist/gui.exe

@@ -1,7 +1,7 @@
 import os
-from pydicom import dcmread
-import shutil
+from pydicom import dcmread, dcmwrite
 import pydicom
+from datetime import datetime
 
 def copy_dicom_files_with_filter(scan_name, dicom_directory):
     """
@@ -15,7 +15,7 @@ def copy_dicom_files_with_filter(scan_name, dicom_directory):
         None
     """
     # Generate the output directory name
-    output_directory_name = "PHI_REMOVED " + scan_name
+    output_directory_name =   scan_name + " PHI_REMOVED"
     current_directory = os.getcwd()  # Get the current working directory
     output_directory = os.path.join(current_directory, output_directory_name)
 
@@ -41,9 +41,22 @@ def copy_dicom_files_with_filter(scan_name, dicom_directory):
         if any(series_description == excl["description"] or series_number == excl["number"] for excl in exclude_series):
             continue  # Skip copying files with excluded series
 
+        # Anonymize the DICOM file
+        # anonymized_dicom_file = anonymize_dicom_file(dicom_file)
+
+            # Anonymize Patient ID
+        dicom_file.PatientID = "ANONYMOUS"
+
+        dicom_file.PatientName = "ANONYMOUS"
+
+        # Anonymize Birthdate
+        dicom_file.PatientBirthDate = datetime.today().strftime('%Y%m%d')
+
         # Copy the file to the output directory
         output_file_path = os.path.join(output_directory, os.path.basename(dicom_file.filename))
-        shutil.copy(dicom_file.filename, output_file_path)
+        # shutil.copy(dicom_file.filename, output_file_path)
+        dcmwrite(output_file_path, dicom_file)
+
 
         print(f"File copied: {dicom_file.filename} to {output_file_path}")
 
@@ -69,6 +82,19 @@ def display_dicom_series_info(dicom_directory):
     for dicom_file in dicom_files:
         series_description = dicom_file.SeriesDescription
         series_number = dicom_file.SeriesNumber
+           # Read the DICOM file
+
+        # Extract patient information
+        patient_id = dicom_file.PatientID
+        birth_date = dicom_file.PatientBirthDate
+        patient_name = dicom_file.PatientName
+
+        # study_instance_uid = dicom_file.StudyInstanceUID
+        # study_description = dicom_file.StudyDescription
+
+        # You can extract more information as needed
+
+
 
         # Create a unique key for each series
         series_key = (series_description, series_number)
@@ -82,7 +108,10 @@ def display_dicom_series_info(dicom_directory):
     # Display unique series and count
     for series_key, info in series_info.items():
         print(f"Series Description: {info['description']}, Series Number: {info['number']}, Count: {info['count']}")
-
+            # Print or return the extracted information
+    print("Patient ID:", patient_id)
+    print("Patient Birth Date:", birth_date)
+    print("Patient Name:", patient_name)
 def remove_phi(root_folder):
     """
     Identify DICOM files, count them, and print information about DICOMOBJ folders.
